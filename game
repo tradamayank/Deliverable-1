@@ -1,0 +1,76 @@
+import java.util.*;
+
+public class game {
+    private List<Integer> deck;
+    private int p1Points;
+    private int p2Points;
+    int i;
+
+    public game(int numPairs) {
+        deck = createDeck(numPairs);
+    }
+
+    private List<Integer> createDeck(int numPairs) {
+        List<Integer> deck = new ArrayList<>();
+        for (i = 1; i <= numPairs; i++) {
+            deck.add(i);
+            deck.add(i);
+        }
+        Collections.shuffle(deck);
+        return deck;
+    }
+
+    private void playGame() {
+        while (!deck.isEmpty()) {
+            p1Points += selectCard(deck) ? 1 : 0;
+            p2Points += selectCard(deck) ? 1 : 0;
+        }
+
+        System.out.println("Game over!");
+        System.out.println("Player 1's points: " + p1Points);
+        System.out.println("Player 2's points: " + p2Points);
+
+        if (p1Points > p2Points) {
+            System.out.println("Player 1 wins!");
+        } else if (p2Points > p1Points) {
+            System.out.println("Player 2 wins!");
+        } else {
+            System.out.println("It's a tie! Starting tiebreaker...");
+            playTiebreaker();
+        }
+    }
+
+    private boolean selectCard(List<Integer> deck) {
+        int card = deck.remove(deck.size() - 1);
+        System.out.println("Selected card: " + card);
+        return deck.remove(Integer.valueOf(card));
+    }
+
+    private void playTiebreaker() {
+        game tiebreakerGame = new game(5);
+
+        while (!tiebreakerGame.deck.isEmpty()) {
+            if (selectCard(tiebreakerGame.deck)) {
+                System.out.println("Tiebreaker winner found!");
+                System.out.println("Player 1 wins the match!");
+                return;
+            }
+            if (selectCard(tiebreakerGame.deck)) {
+                System.out.println("Tiebreaker winner found!");
+                System.out.println("Player 2 wins the match!");
+                return;
+            }
+        }
+        System.out.println("Tiebreaker game over. No winner found. It's a tie!");
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the number of pairs of cards: ");
+        int numPairs = scanner.nextInt();
+        scanner.close();
+
+        game game = new game(numPairs);
+        game.playGame();
+    }
+}
